@@ -1,0 +1,57 @@
+sources:
+  local:
+    host: localhost
+    port: 3307
+    user: sync_user
+    password: sync_pass
+    database: mytdp
+
+  mytdp_remote:
+    host: ${MYTDP_HOST}
+    port: ${MYTDP_PORT:3306}
+    user: ${MYTDP_USER}
+    password: ${MYTDP_PASS}
+    database: mytdp
+
+  tdp_events:
+    host: ${TDP_EVENTS_HOST}
+    port: ${TDP_EVENTS_PORT:3306}
+    user: ${TDP_EVENTS_USER}
+    password: ${TDP_EVENTS_PASS}
+    database: tdp_events
+
+  prod_mytdp_app:
+    host: ${PROD_MYTDP_HOST}
+    port: ${PROD_MYTDP_PORT:3306}
+    user: ${PROD_MYTDP_USER}
+    password: ${PROD_MYTDP_PASS}
+    database: prod_mytdp_app
+
+  tdp_feed:
+    host: ${TDP_FEED_HOST}
+    port: ${TDP_FEED_PORT:3306}
+    user: ${TDP_FEED_USER}
+    password: ${TDP_FEED_PASS}
+    database: tdp_feed
+
+  tdp_calendar:
+    host: ${TDP_CALENDAR_HOST}
+    port: ${TDP_CALENDAR_PORT:3306}
+    user: ${TDP_CALENDAR_USER}
+    password: ${TDP_CALENDAR_PASS}
+    database: tdp_calendar_db
+
+destination:
+  local:
+    host: localhost
+    port: 3307
+    user: sync_user
+    password: sync_pass
+    database: mytdp
+
+  prod:
+    host: ${DEST_HOST}
+    port: ${DEST_PORT:3306}
+    user: ${DEST_USER}
+    password: ${DEST_PASS}
+    database: ${DEST_DB:mytdp}
