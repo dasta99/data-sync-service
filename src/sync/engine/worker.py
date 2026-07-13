@@ -40,6 +40,7 @@ class BaseSyncWorker:
     def sync(self, watermark: Dict[str, Any], watermark_repo=None) -> int:
         """Execute one sync cycle. Returns rows synced."""
         self.status.mark_running(self.table_name)
+        self.log._log("info", "sync_start", watermark=watermark)
         start_time = time.time()
 
         def _do_sync():
@@ -81,15 +82,19 @@ class BaseSyncWorker:
 
     def _fetch_rows(self, watermark: Dict[str, Any]) -> list:
         query, params = self.query_builder.build_select(self.config, watermark)
+        self.log._log("info", "fetch_start", query_preview=query[:200])
         cur = self.source.cursor()
         try:
             cur.execute(query, params)
-            return cur.fetchall()
+            rows = cur.fetchall()
+            self.log._log("info", "fetch_complete", row_count=len(rows))
+            return rows
         finally:
             cur.close()
 
     def _write_rows(self, rows: list) -> None:
         upsert_sql = self.query_builder.build_upsert(self.config)
+        self.log._log("info", "write_start", row_count=len(rows))
         self.batch_writer.write(
             dest=self.dest,
             table=self.config["dest_table"],
@@ -98,3 +103,4 @@ class BaseSyncWorker:
             batch_size=self.config["batch_size"],
             upsert_sql=upsert_sql,
         )
+        self.log._log("info", "write_complete")

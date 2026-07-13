@@ -70,6 +70,8 @@ class PooledDatabaseFactory:
                 charset="utf8mb4",
                 cursorclass=pymysql.cursors.DictCursor,
                 autocommit=False,
+                connect_timeout=10,
+                read_timeout=300,
             )
         return PyMySQLDatabase(self._pools[key].connection())
 
