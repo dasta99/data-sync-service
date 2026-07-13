@@ -1,5 +1,6 @@
 """Connection pool management — wraps pymysql with Database protocol."""
 
+import os
 from typing import Dict
 
 import pymysql
@@ -71,7 +72,7 @@ class PooledDatabaseFactory:
                 cursorclass=pymysql.cursors.DictCursor,
                 autocommit=False,
                 connect_timeout=10,
-                read_timeout=300,
+                read_timeout=int(os.getenv("READ_TIMEOUT", "300")),
             )
         return PyMySQLDatabase(self._pools[key].connection())
 

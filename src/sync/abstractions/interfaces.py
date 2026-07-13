@@ -75,6 +75,9 @@ class StatusTracker(ABC):
     def mark_running(self, table_name: str) -> None: ...
 
     @abstractmethod
+    def mark_idle(self, table_name: str) -> None: ...
+
+    @abstractmethod
     def mark_success(self, table_name: str, rows: int, duration_ms: int) -> None: ...
 
     @abstractmethod

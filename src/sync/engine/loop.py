@@ -2,7 +2,7 @@
 
 import asyncio
 import logging
-from typing import Optional
+from typing import Dict, Optional, Set
 
 from sync.abstractions import Database
 from sync.container import get_source_db, get_config_repo, get_watermark_repo
@@ -14,6 +14,26 @@ from sync.monitoring.status import StatusWriter
 from sync.monitoring.history import HistoryLogger
 
 logger = logging.getLogger("sync.loop")
+
+_running_tasks: Dict[str, asyncio.Task] = {}
+_cancelled_tables: Set[str] = set()
+
+
+def cancel_table(table_name: str) -> bool:
+    """Cancel a running sync for the given table. Returns True if cancelled."""
+    if table_name in _running_tasks:
+        _cancelled_tables.add(table_name)
+        logger.info(f"[{table_name}] cancel requested")
+        return True
+    return False
+
+
+def get_cancelled_tables() -> Set[str]:
+    return set(_cancelled_tables)
+
+
+def get_running_tables() -> list:
+    return list(_running_tasks.keys())
 
 
 def _build_worker(table_config: dict, dest_db: Database) -> BaseSyncWorker:
@@ -57,6 +77,13 @@ async def sync_table(table_config: dict, dest_db: Database, shutdown_event: asyn
     consecutive_no_data = 0
 
     while not shutdown_event.is_set():
+        if table_name in _cancelled_tables:
+            logger.info(f"[{table_name}] cancelled, stopping sync loop")
+            _cancelled_tables.discard(table_name)
+            status = StatusWriter(dest_db)
+            status.mark_idle(table_name)
+            break
+
         try:
             current_config = config_repo.get_table_config(table_name)
             if not current_config or not current_config["enabled"]:
@@ -83,7 +110,7 @@ async def sync_table(table_config: dict, dest_db: Database, shutdown_event: asyn
             logger.debug(f"[{table_name}] no data, backing off to {sleep_sec}s (consecutive={consecutive_no_data})")
 
         for _ in range(sleep_sec):
-            if shutdown_event.is_set():
+            if shutdown_event.is_set() or table_name in _cancelled_tables:
                 break
             await asyncio.sleep(1)
 
@@ -97,14 +124,33 @@ async def run_sync_loop(dest_db: Database, shutdown_event: asyncio.Event):
     while not shutdown_event.is_set():
         try:
             tables = config_repo.get_enabled_tables()
-            if not tables:
-                logger.info("No enabled tables, waiting...")
-                await asyncio.sleep(10)
-                continue
+            table_names = {t["table_name"] for t in tables}
 
-            await asyncio.gather(*(sync_table(t, dest_db, shutdown_event) for t in tables))
+            # Remove tasks for tables no longer enabled or cancelled
+            for name in list(_running_tasks):
+                if name not in table_names or name in _cancelled_tables:
+                    task = _running_tasks.pop(name)
+                    if not task.done():
+                        task.cancel()
+
+            # Spawn tasks for new enabled tables
+            for t in tables:
+                name = t["table_name"]
+                if name not in _running_tasks or _running_tasks[name].done():
+                    _running_tasks[name] = asyncio.create_task(
+                        sync_table(t, dest_db, shutdown_event),
+                        name=f"sync_{name}",
+                    )
+
         except Exception as e:
             logger.error(f"Sync loop error: {e}")
-            await asyncio.sleep(5)
+
+        await asyncio.sleep(5)
+
+    # Cancel all running tasks on shutdown
+    for task in _running_tasks.values():
+        if not task.done():
+            task.cancel()
+    _running_tasks.clear()
 
     logger.info("Sync service stopped")

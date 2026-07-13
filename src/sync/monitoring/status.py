@@ -23,6 +23,17 @@ class StatusWriter(StatusTracker):
             cur.close()
         self.db.commit()
 
+    def mark_idle(self, table_name: str) -> None:
+        cur = self.db.cursor()
+        try:
+            cur.execute("""
+                UPDATE sync_status SET status = 'idle'
+                WHERE table_name = %s
+            """, (table_name,))
+        finally:
+            cur.close()
+        self.db.commit()
+
     def mark_success(self, table_name: str, rows: int, duration_ms: int) -> None:
         cur = self.db.cursor()
         try:
