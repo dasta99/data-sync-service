@@ -29,7 +29,11 @@ class ConfigLoader:
         if isinstance(value, dict):
             return {k: self._resolve(v) for k, v in value.items()}
         if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
-            return os.getenv(value[2:-1], "")
+            inner = value[2:-1]
+            if ":" in inner:
+                var_name, default = inner.split(":", 1)
+                return os.getenv(var_name, default)
+            return os.getenv(inner, "")
         return value
 
     def get_sources(self) -> Dict[str, dict]:

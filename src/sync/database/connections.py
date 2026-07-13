@@ -63,7 +63,7 @@ class PooledDatabaseFactory:
                 maxconnections=pool_size,
                 blocking=True,
                 host=config["host"],
-                port=config["port"],
+                port=int(config["port"]),
                 database=config["database"],
                 user=config["user"],
                 password=config["password"],
