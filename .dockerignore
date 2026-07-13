@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.git
+.gitignore
+.env
+.env.example
+*.md
+deploy.sh
+ecosystem.config.js
+Makefile
+docker-compose.yml

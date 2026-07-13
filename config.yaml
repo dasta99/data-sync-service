@@ -1,10 +1,10 @@
 sources:
   local:
-    host: localhost
-    port: 3307
-    user: sync_user
-    password: sync_pass
-    database: mytdp
+    host: ${LOCAL_DB_HOST:localhost}
+    port: ${LOCAL_DB_PORT:3307}
+    user: ${LOCAL_DB_USER:sync_user}
+    password: ${LOCAL_DB_PASS:sync_pass}
+    database: ${LOCAL_DB_NAME:mytdp}
 
   mytdp_remote:
     host: ${MYTDP_HOST}
@@ -43,11 +43,11 @@ sources:
 
 destination:
   local:
-    host: localhost
-    port: 3307
-    user: sync_user
-    password: sync_pass
-    database: mytdp
+    host: ${LOCAL_DB_HOST:localhost}
+    port: ${LOCAL_DB_PORT:3307}
+    user: ${LOCAL_DB_USER:sync_user}
+    password: ${LOCAL_DB_PASS:sync_pass}
+    database: ${LOCAL_DB_NAME:mytdp}
 
   prod:
     host: ${DEST_HOST}
