@@ -15,4 +15,4 @@ USER app
 
 EXPOSE 8090
 
-CMD ["python", "main.py", "--local"]
+CMD ["python", "main.py"]

@@ -3,12 +3,19 @@
 import json
 import logging
 import sys
-from datetime import datetime
+from datetime import datetime, date
 
 from sync.abstractions import SyncLogger
 
 logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
 _logger = logging.getLogger("sync")
+
+
+class _SafeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        return str(obj)
 
 
 class SyncJsonLogger(SyncLogger):
@@ -24,10 +31,11 @@ class SyncJsonLogger(SyncLogger):
             "timestamp": datetime.utcnow().isoformat(),
             **kwargs,
         }
+        msg = json.dumps(entry, cls=_SafeEncoder)
         if level == "error":
-            _logger.error(json.dumps(entry))
+            _logger.error(msg)
         else:
-            _logger.info(json.dumps(entry))
+            _logger.info(msg)
 
     def sync_complete(self, rows: int, duration_ms: int):
         self._log("info", "sync_complete", rows=rows, duration_ms=duration_ms)

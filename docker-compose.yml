@@ -1,47 +1,11 @@
 services:
-  mysql-local:
-    image: mysql:8.0
-    container_name: sync-test-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: mytdp
-      MYSQL_USER: sync_user
-      MYSQL_PASSWORD: sync_pass
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./migrations:/docker-entrypoint-initdb.d
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-      - --binlog-format=ROW
-      - --server-id=1
-      - --log-bin=mysql-bin
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   sync-service:
     build: .
     container_name: sync-service
     restart: unless-stopped
-    depends_on:
-      mysql-local:
-        condition: service_healthy
+    env_file: .env
     environment:
-      LOCAL_DB_HOST: mysql-local
-      LOCAL_DB_PORT: "3306"
-      LOCAL_DB_USER: sync_user
-      LOCAL_DB_PASS: sync_pass
-      LOCAL_DB_NAME: mytdp
       HEALTH_PORT: "8090"
       READ_TIMEOUT: "300"
     ports:
       - "8090:8090"
-
-volumes:
-  mysql-data:
