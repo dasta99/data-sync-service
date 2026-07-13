@@ -18,7 +18,7 @@ Incremental MySQL-to-MySQL sync with adaptive polling, keyset pagination, and tr
                           │                              │     │  sync_history    │
                           │  ┌─────────────────────────┐ │     └──────────────────┘
                           │  │  Health API (:8090)     │ │
-                          │  │  /health /config        │ │
+                          │  │  /health /config /sync  │ │
                           │  └─────────────────────────┘ │
                           └──────────────────────────────┘
                                     ▲
@@ -85,7 +85,8 @@ sync_service/
 │   └── api/
 │       ├── __init__.py              # FastAPI app, mounts routers
 │       ├── health.py                # /health, /health/ready, /health/sync
-│       └── config.py                # CRUD: GET/POST/PUT/DELETE /config
+│       ├── config.py                # CRUD: GET/POST/PUT/DELETE /config
+│       └── sync.py                  # Sync control: cancel, running, cancelled
 │
 └── tests/
     └── unit/
@@ -256,6 +257,26 @@ curl -X PUT http://localhost:8090/config/booth_voter \
   -d '{"enabled": false}'
 ```
 
+### Sync Control
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/sync/{table_name}/cancel` | Cancel a running sync |
+| `GET` | `/sync/running` | List currently active sync tasks |
+| `GET` | `/sync/cancelled` | List pending cancellations |
+
+**Example — Cancel a stuck sync:**
+
+```bash
+curl -X POST http://localhost:8090/sync/booth_voter/cancel
+```
+
+**Example — Check what's running:**
+
+```bash
+curl http://localhost:8090/sync/running
+```
+
 ---
 
 ## Quick Start (Local)
@@ -363,6 +384,7 @@ MYTDP_PASS=<password>
 
 # Service
 HEALTH_PORT=8090
+READ_TIMEOUT=300  # Source DB read timeout in seconds (default: 300 = 5 min)
 ```
 
 ### Per-Table Settings (via API or direct DB)
