@@ -152,13 +152,17 @@ src/
 
 ## Commands
 
-```bash
-# Local development
-python3 main.py --local
-
-# Production
-python3 main.py
-```
+| Command | What it does |
+|---------|--------------|
+| `make start` | Start databases |
+| `make stop` | Stop databases |
+| `make run` | Run pipeline (local) |
+| `make run-prod` | Run pipeline (production) |
+| `make seed` | Seed test data |
+| `make seed-more` | Seed more test data |
+| `make logs` | View database logs |
+| `make test` | Run tests |
+| `make clean` | Stop databases and clean cache |
 
 ---
 
