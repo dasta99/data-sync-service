@@ -47,11 +47,27 @@ flowchart LR
 
 ```bash
 # Start databases
-docker compose up -d
+make start
 
 # Run pipeline
-python3 main.py --local
+make run
 ```
+
+---
+
+## Commands
+
+| Command | What it does |
+|---------|--------------|
+| `make start` | Start databases |
+| `make stop` | Stop databases |
+| `make run` | Run pipeline (local) |
+| `make run-prod` | Run pipeline (production) |
+| `make seed` | Seed test data |
+| `make seed-more` | Seed more test data |
+| `make logs` | View database logs |
+| `make test` | Run tests |
+| `make clean` | Stop databases and clean cache |
 
 ---
 
