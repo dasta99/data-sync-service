@@ -176,12 +176,13 @@ flowchart TB
 flowchart LR
     A[Raw Data<br/>Individual records] -->|Aggregate| B[Fact Table<br/>Summary numbers]
     
-    A: "Voter 1 verified"<br/>"Voter 2 verified"<br/>"Voter 3 not verified"
-    B: "2 voters verified<br/>1 not verified"
-    
     style A fill:#e3f2fd
     style B fill:#e8f5e9
 ```
+
+**Example:**
+- Raw data: "Voter 1 verified", "Voter 2 verified", "Voter 3 not verified"
+- Fact table: "2 voters verified, 1 not verified"
 
 ---
 
