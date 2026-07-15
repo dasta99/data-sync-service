@@ -138,16 +138,6 @@ FROM (
     UNION SELECT 46 UNION SELECT 47 UNION SELECT 48 UNION SELECT 49 UNION SELECT 50
 ) numbers;
 
--- Seed daily_booth_activity (one record per active booth per day)
-INSERT INTO daily_booth_activity (booth_id, activity_date, state_id)
-SELECT DISTINCT
-    bv.booth_id,
-    DATE(bv.updated_at),
-    1
-FROM booth_voter bv
-WHERE bv.sir_verified = 1
-AND DATE(bv.updated_at) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY);
-
 -- Seed sir_enums_forms_booth_wise_tracking
 INSERT INTO sir_enums_forms_booth_wise_tracking (booth_id, efs_distributed, efs_digitized, total_voters, created_at)
 SELECT
@@ -164,23 +154,3 @@ FROM (
     UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 UNION SELECT 25
     UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29 UNION SELECT 30
 ) numbers;
-
--- Seed sir_verification_info (aggregated data by booth and date)
-INSERT INTO sir_verification_info (verification_date, booth_id, verified_voters, active_users, available_count, temporary_shift_count, permanent_shift_count, death_count, duplicate_count, double_count, form_submitted_to_blo, blo_digitized, inserted_time)
-SELECT
-    DATE(bv.updated_at),
-    bv.booth_id,
-    COUNT(DISTINCT bv.voter_id),
-    COUNT(DISTINCT bv.sir_verified_by),
-    SUM(CASE WHEN bv.sir_status = 'available' THEN 1 ELSE 0 END),
-    SUM(CASE WHEN bv.sir_status = 'temporary shift' THEN 1 ELSE 0 END),
-    SUM(CASE WHEN bv.sir_status = 'permanent shift' THEN 1 ELSE 0 END),
-    SUM(CASE WHEN bv.sir_status = 'death' THEN 1 ELSE 0 END),
-    SUM(CASE WHEN bv.sir_status = 'duplicate' THEN 1 ELSE 0 END),
-    SUM(CASE WHEN bv.sir_status = 'double vote' THEN 1 ELSE 0 END),
-    SUM(IFNULL(bv.form_submitted_to_blo, 0)),
-    SUM(IFNULL(bv.blo_digitized, 0)),
-    DATE_ADD(NOW(), INTERVAL 330 MINUTE)
-FROM booth_voter bv
-WHERE bv.sir_verified = 1
-GROUP BY DATE(bv.updated_at), bv.booth_id;

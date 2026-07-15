@@ -62,7 +62,7 @@ src/transform/<domain>/
 name: rally
 depends_on:
   - booth_voter
-  - daily_booth_activity
+  - booth
 outputs:
   - fact_rally_summary
   - fact_rally_attendance
@@ -97,7 +97,7 @@ class Handler(TransformHandler):
 
     @property
     def depends_on(self) -> List[str]:
-        return ["booth_voter", "daily_booth_activity"]
+        return ["booth_voter", "booth"]
 
     @property
     def outputs(self) -> List[str]:
@@ -359,9 +359,9 @@ INSERT INTO sync_config (table_name, source_name, source_table, dest_table,
     enabled, batch_size, watermark_column, primary_key,
     columns_json, filters_json)
 VALUES (
-    'daily_booth_activity', 'local', 'daily_booth_activity', 'daily_booth_activity',
+    'rallies', 'local', 'rallies', 'rallies',
     1, 500, 'updated_at', 'id',
-    '["id", "booth_id", "activity_date", "state_id", "updated_at"]',
+    '["id", "booth_id", "rally_date", "attendees", "updated_at"]',
     '[]'
 );
 ```
@@ -369,13 +369,13 @@ VALUES (
 ### Step 2: Create dest table
 
 ```sql
-CREATE TABLE IF NOT EXISTS daily_booth_activity (
+CREATE TABLE IF NOT EXISTS rallies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     booth_id VARCHAR(26) DEFAULT NULL,
-    activity_date DATE DEFAULT NULL,
-    state_id INT DEFAULT NULL,
+    rally_date DATE DEFAULT NULL,
+    attendees INT DEFAULT 0,
     updated_at DATETIME DEFAULT NULL,
-    UNIQUE KEY uk_dba_booth_date (booth_id, activity_date)
+    UNIQUE KEY uk_rallies_booth_date (booth_id, rally_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 ```
 

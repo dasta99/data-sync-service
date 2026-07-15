@@ -26,7 +26,7 @@ load_dotenv()
 
 TABLES = {
     "mytdp": [
-        "booth_voter", "sir_verification_info", "sir_verification_info_temp", "sir_form_counts",
+        "booth_voter", "sir_form_counts",
         "campaigns", "campaigns_address_mapping", "campaigns_assemblies", "campaign_address_mapping",
         "address_visit_info", "address_visit_info_temp",
         "meetings", "meeting_schedules", "meeting_attendance", "meeting_invite_roles",

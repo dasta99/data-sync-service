@@ -6,7 +6,6 @@ UPDATE mytdp.sync_config SET columns_json = '["id","name","state_id"]' WHERE tab
 UPDATE mytdp.sync_config SET columns_json = '["id","state_name"]' WHERE table_name = 'state';
 UPDATE mytdp.sync_config SET columns_json = '["id","cluster_name","assembly_id"]' WHERE table_name = 'mytdp_cluster';
 UPDATE mytdp.sync_config SET columns_json = '["id","unit_name","assembly_id"]' WHERE table_name = 'mytdp_unit';
-UPDATE mytdp.sync_config SET columns_json = '["id","verification_date","booth_id","verified_voters","active_users","available_count","temporary_shift_count","permanent_shift_count","death_count","duplicate_count","double_count","form_submitted_to_blo","blo_digitized","inserted_time"]' WHERE table_name = 'sir_verification_info';
 UPDATE mytdp.sync_config SET columns_json = '["id","booth_id","user_id","role_id","forms_distributed","forms_received","created_at","updated_at"]' WHERE table_name = 'sir_form_counts';
 
 UPDATE mytdp.sync_config SET columns_json = '["state_id","state_name"]' WHERE table_name = 'dp_state';

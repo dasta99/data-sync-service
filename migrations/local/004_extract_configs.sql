@@ -9,7 +9,6 @@ VALUES
   ('state', 'local', 'state', 'mytdp.state', 1, 300, 500, 'id', 'id'),
   ('mytdp_cluster', 'local', 'cluster', 'mytdp.cluster', 1, 300, 500, 'id', 'id'),
   ('mytdp_unit', 'local', 'unit', 'mytdp.unit', 1, 300, 500, 'id', 'id'),
-  ('sir_verification_info', 'local', 'sir_verification_info', 'mytdp.sir_verification_info', 1, 60, 500, 'id', 'id'),
   ('sir_form_counts', 'local', 'sir_form_counts', 'mytdp.sir_form_counts', 1, 60, 500, 'id', 'id')
 ON DUPLICATE KEY UPDATE enabled = 1;
 

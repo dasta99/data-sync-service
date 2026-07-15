@@ -57,25 +57,6 @@ CREATE TABLE IF NOT EXISTS unit (
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS sir_verification_info (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    verification_date DATETIME DEFAULT NULL,
-    booth_id VARCHAR(26) DEFAULT NULL,
-    verified_voters BIGINT DEFAULT 0,
-    active_users BIGINT DEFAULT 0,
-    available_count BIGINT DEFAULT 0,
-    temporary_shift_count BIGINT DEFAULT 0,
-    permanent_shift_count BIGINT DEFAULT 0,
-    death_count BIGINT DEFAULT 0,
-    duplicate_count BIGINT DEFAULT 0,
-    double_count BIGINT DEFAULT 0,
-    form_submitted_to_blo BIGINT DEFAULT 0,
-    blo_digitized BIGINT DEFAULT 0,
-    inserted_time DATETIME DEFAULT NULL,
-    KEY idx_svi_date (verification_date),
-    KEY idx_svi_booth (booth_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE IF NOT EXISTS sir_form_counts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     booth_id VARCHAR(26) DEFAULT NULL,
@@ -86,12 +67,4 @@ CREATE TABLE IF NOT EXISTS sir_form_counts (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     KEY idx_sfc_booth (booth_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-CREATE TABLE IF NOT EXISTS daily_booth_activity (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    booth_id VARCHAR(26) DEFAULT NULL,
-    activity_date DATE DEFAULT NULL,
-    state_id INT DEFAULT NULL,
-    UNIQUE KEY uk_dba_booth_date (booth_id, activity_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -2,7 +2,7 @@
 """Extract schema for key MYTDP tables only.
 
 Focuses on tables used in dashboard queries:
-- booth_voter, sir_verification_info, campaigns, meetings, events
+- booth_voter, campaigns, meetings, events
 - Geography: booth, constituency, state, tehsil, panchayat, cluster, unit
 - Committee: tdp_committee, tdp_cadre, user_address
 
@@ -45,7 +45,7 @@ def get_connection() -> pymysql.Connection:
 KEY_TABLES = {
     "mytdp": [
         # Core SIR tables
-        "booth_voter", "sir_verification_info", "sir_verification_info_temp", "sir_form_counts",
+        "booth_voter", "sir_form_counts",
         # Campaign
         "campaigns", "campaigns_address_mapping", "campaigns_assemblies", "campaign_address_mapping",
         "address_visit_info", "address_visit_info_temp",
