@@ -220,6 +220,46 @@ flowchart LR
     style C fill:#e8f5e9
 ```
 
+### Why Micro-Batching?
+
+We process data in small batches (500 records at a time) instead of all at once:
+
+```mermaid
+flowchart TD
+    subgraph AllAtOnce["All at once"]
+        A1[Read 70M records] --> A2[Process all] --> A3[Write 70M records]
+        A4[Time: 30+ minutes<br/>Memory: High<br/>Risk: Timeout]
+    end
+    
+    subgraph MicroBatch["Micro-batching (our approach)"]
+        B1[Read 500 records] --> B2[Process batch] --> B3[Write 500 records]
+        B4[Repeat until done]
+        B5[Time: Continuous<br/>Memory: Low<br/>Risk: Minimal]
+    end
+    
+    style AllAtOnce fill:#ffebee
+    style MicroBatch fill:#e8f5e9
+```
+
+**Why we chose micro-batching:**
+
+| Problem | All-at-once | Micro-batching |
+|---------|-------------|----------------|
+| Memory | Loads entire table into memory | Only 500 records at a time |
+| Timeout | Risk of long-running queries | Each batch completes quickly |
+| Failure | Restart from beginning | Resume from last batch |
+| Blocking | Locks tables for extended time | Minimal locking |
+| Progress | No visibility until done | Real-time progress updates |
+
+**Example:**
+```sql
+-- Keyset pagination: efficient for large tables
+SELECT * FROM booth_voter
+WHERE (updated_at > '2026-07-15' OR (updated_at = '2026-07-15' AND id > 'BV00300'))
+ORDER BY updated_at, id
+LIMIT 500
+```
+
 ### What is Denormalization?
 
 **Denormalization** = Combining related data into one table
