@@ -1,9 +1,7 @@
-# ─── Database Layer ───────────────────────────────────────────
-from sync.database.connections import PooledDatabaseFactory, PyMySQLDatabase
-from sync.database.config import ConfigLoader
-from sync.database.repositories import (
-    SchemaManager, TableConfigRepository, WatermarkRepository,
-)
+# ─── Sync Database (backward compat) ──────────────────────────
+from shared.connections import PooledDatabaseFactory, PyMySQLDatabase
+from shared.config import ConfigLoader
+from shared.repositories import SchemaManager, TableConfigRepository, WatermarkRepository
 
 __all__ = [
     "PooledDatabaseFactory", "PyMySQLDatabase", "ConfigLoader",

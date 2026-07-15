@@ -1,16 +1,23 @@
 sources:
   local:
     host: ${LOCAL_DB_HOST:localhost}
-    port: ${LOCAL_DB_PORT:3307}
+    port: ${LOCAL_DB_PORT:3308}
     user: ${LOCAL_DB_USER:sync_user}
     password: ${LOCAL_DB_PASS:sync_pass}
     database: ${LOCAL_DB_NAME:mytdp}
 
+  dakavara_pa:
+    host: ${LOCAL_DB_HOST:localhost}
+    port: ${LOCAL_DB_PORT:3308}
+    user: ${LOCAL_DB_USER:sync_user}
+    password: ${LOCAL_DB_PASS:sync_pass}
+    database: dakavara_pa
+
   mytdp_remote:
-    host: ${MYTDP_HOST}
+    host: ${MYTDP_HOST:localhost}
     port: ${MYTDP_PORT:3306}
-    user: ${MYTDP_USER}
-    password: ${MYTDP_PASS}
+    user: ${MYTDP_USER:sync_user}
+    password: ${MYTDP_PASS:sync_pass}
     database: mytdp
 
   tdp_events:

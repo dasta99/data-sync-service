@@ -5,9 +5,11 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from sync.abstractions import Database
-from sync.database import PooledDatabaseFactory, ConfigLoader, TableConfigRepository
-from sync.database.mode import get_mode
+from shared.interfaces import Database
+from shared.connections import PooledDatabaseFactory
+from shared.config import ConfigLoader
+from shared.repositories import TableConfigRepository
+from shared.mode import get_mode
 
 router = APIRouter()
 _loader = ConfigLoader()

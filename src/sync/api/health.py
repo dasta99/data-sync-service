@@ -1,12 +1,15 @@
 """Health check endpoints using FastAPI dependency injection."""
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
-from sync.abstractions import Database
-from sync.database import PooledDatabaseFactory, ConfigLoader, TableConfigRepository
-from sync.database.mode import get_mode
-from sync.monitoring import StatusWriter, HistoryLogger
+from shared.interfaces import Database
+from shared.connections import PooledDatabaseFactory
+from shared.config import ConfigLoader
+from shared.repositories import TableConfigRepository
+from shared.mode import get_mode
+from extract.status import StatusWriter
+from extract.history import HistoryLogger
 
 app = FastAPI(title="Data Sync Service")
 

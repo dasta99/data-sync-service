@@ -3,10 +3,11 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from sync.engine.loop import cancel_table, get_cancelled_tables, get_running_tables
-from sync.monitoring.status import StatusWriter
-from sync.database import PooledDatabaseFactory, ConfigLoader
-from sync.database.mode import get_mode
+from extract.loop import cancel_table, get_cancelled_tables, get_running_tables
+from extract.status import StatusWriter
+from shared.connections import PooledDatabaseFactory
+from shared.config import ConfigLoader
+from shared.mode import get_mode
 
 router = APIRouter()
 _loader = ConfigLoader()

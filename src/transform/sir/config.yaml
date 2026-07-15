@@ -1,0 +1,7 @@
+name: sir
+depends_on:
+  - booth_voter
+outputs:
+  - fact_voter_stats
+  - summary_sir_rates_by_party
+schedule_hint: 300

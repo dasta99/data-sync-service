@@ -1,6 +1,6 @@
-# ─── Monitoring ───────────────────────────────────────────────
-from sync.monitoring.status import StatusWriter
-from sync.monitoring.history import HistoryLogger
-from sync.monitoring.logger import SyncJsonLogger
+# ─── Sync Monitoring (backward compat) ────────────────────────
+from extract.status import StatusWriter
+from extract.history import HistoryLogger
+from extract.logger import SyncJsonLogger
 
 __all__ = ["StatusWriter", "HistoryLogger", "SyncJsonLogger"]

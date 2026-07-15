@@ -1,12 +1,7 @@
-"""Shared runtime mode — avoids circular imports between main and health."""
+"""Shared runtime mode — backward compat redirect.
 
-_current_mode = "prod"
+Use shared.mode instead.
+"""
+from shared.mode import set_mode, get_mode
 
-
-def set_mode(mode: str):
-    global _current_mode
-    _current_mode = mode
-
-
-def get_mode() -> str:
-    return _current_mode
+__all__ = ["set_mode", "get_mode"]
