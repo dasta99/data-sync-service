@@ -1,80 +1,131 @@
-# data-sync-service
+# Data Sync Service
 
-ETL pipeline that extracts data from 5 production TDP sources, syncs into dest warehouse (mytdp + dakavara_pa schemas), then denormalizes and transforms into OLAP-friendly summary tables.
+> **ETL pipeline that syncs data from production databases and creates summary reports.**
 
-## Architecture
+## What This System Does
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for general architecture.
-
-See [docs/SIR_DOMAIN.md](docs/SIR_DOMAIN.md) for SIR domain implementation example.
-
+```mermaid
+flowchart LR
+    A[5 Production<br/>Databases] -->|Copy| B[Staging<br/>Area]
+    B -->|Process| C[Summary<br/>Reports]
+    
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style C fill:#e8f5e9
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  5 PRODUCTION SOURCES                        │
-│                                                             │
-│  mytdp_remote    ─┐                                         │
-│  tdp_events      ─┼──▶ Dest DB (mytdp + dakavara_pa)        │
-│  prod_mytdp_app  ─┤     port 3307                           │
-│  tdp_feed        ─┤                                         │
-│  tdp_calendar    ─┘                                         │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    TRANSFORM PHASE                          │
-│                                                             │
-│  1. Denormalize ONCE into dimension tables                   │
-│  2. Aggregate from dimensions into summary/fact tables       │
-└─────────────────────────────────────────────────────────────┘
-```
+
+**Simple explanation:**
+1. **Copy** data from 5 production databases
+2. **Combine** related data into one place
+3. **Summarize** into easy-to-read reports
+
+---
 
 ## Quick Start
 
 ```bash
 # Start databases
-docker compose up -d tdp-source dest-warehouse
-
-# Seed test data
-./scripts/seed_source.sh 10
+docker compose up -d
 
 # Run pipeline
 python3 main.py --local
 ```
 
+---
+
+## Documentation
+
+### For Everyone
+
+| Document | Description |
+|----------|-------------|
+| [**Architecture**](docs/ARCHITECTURE.md) | How the system works (with diagrams) |
+| [**SIR Domain**](docs/SIR_DOMAIN.md) | Voter verification tracking example |
+
+### For Developers
+
+| Document | Description |
+|----------|-------------|
+| [**Adding Transforms**](docs/ADDING_TRANSFORMS.md) | How to add new features |
+| [**Technical Details**](docs/TECHNICAL.md) | Deep dive for developers |
+
+---
+
+## How It Works
+
+```mermaid
+flowchart TB
+    subgraph Sources["Production Databases"]
+        S1[mytdp_remote]
+        S2[tdp_events]
+        S3[prod_mytdp_app]
+        S4[tdp_feed]
+        S5[tdp_calendar]
+    end
+    
+    subgraph Staging["Staging Area"]
+        D1[mytdp schema]
+        D2[dakavara_pa schema]
+    end
+    
+    subgraph Reports["Summary Tables"]
+        R1[Booth verification stats]
+        R2[Location voter counts]
+    end
+    
+    Sources --> Staging
+    Staging --> Reports
+    
+    style Sources fill:#e3f2fd
+    style Staging fill:#fff3e0
+    style Reports fill:#e8f5e9
+```
+
+---
+
+## Key Features
+
+### 1. Efficient Data Sync
+- Only copies what changed (not entire database)
+- Handles millions of records efficiently
+
+### 2. Smart Denormalization
+- Combines related data ONCE (not multiple times)
+- Makes queries fast and efficient
+
+### 3. Real-time Reports
+- Booth verification stats
+- Active user stats
+- Location voter counts
+
+---
+
 ## Project Structure
 
 ```
 src/
-├── extract/              # CDC extraction
-├── transform/            # Domain transforms
-│   ├── base.py           # TransformHandler + TransformHelper
-│   ├── registry.py       # Auto-discovers handlers
-│   ├── orchestrator.py   # Dependency dispatch
-│   └── sir/              # SIR domain (example)
-│       ├── handler.py
-│       └── transforms/
-│           ├── denormalize.py
-│           ├── booth_sir.py
-│           ├── booth_cubs.py
-│           └── voter_location.py
-├── load/                 # Upsert/load strategies
-└── shared/               # Config, connections, interfaces
-migrations/
-├── prod/                 # Production schemas
-└── local/                # Seeds, staging, configs
-docs/
-├── ARCHITECTURE.md       # General architecture
-├── SIR_DOMAIN.md         # SIR implementation example
-└── ADDING_TRANSFORMS.md  # How to add new domains
+├── extract/      # Copy data from production
+├── transform/    # Process and summarize
+├── load/         # Save to database
+└── shared/       # Common utilities
 ```
+
+---
 
 ## Commands
 
 ```bash
-python3 main.py --local    # Local Docker MySQL (port 3307)
-python3 main.py            # Production (reads .env)
+# Local development
+python3 main.py --local
+
+# Production
+python3 main.py
 ```
 
-## Adding a New Transform
+---
 
-See [docs/ADDING_TRANSFORMS.md](docs/ADDING_TRANSFORMS.md)
+## Learn More
+
+- [**Architecture**](docs/ARCHITECTURE.md) — Detailed system design
+- [**SIR Domain**](docs/SIR_DOMAIN.md) — Voter verification example
+- [**Adding Transforms**](docs/ADDING_TRANSFORMS.md) — Developer guide

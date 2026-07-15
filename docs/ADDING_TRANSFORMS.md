@@ -1,30 +1,25 @@
-# ETL Pipeline Architecture
+# Adding New Features (Transforms)
+
+> **For developers:** How to add new data processing features to the system.
 
 ## Overview
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  5 PRODUCTION SOURCES                        │
-│                                                             │
-│  mytdp_remote    ─┐                                         │
-│  tdp_events      ─┼──▶ CDC Sync ──▶ Dest DB (port 3307)     │
-│  prod_mytdp_app  ─┤                                         │
-│  tdp_feed        ─┤     mytdp schema                        │
-│  tdp_calendar    ─┘     dakavara_pa schema                  │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                    TRANSFORM PHASE                          │
-│                                                             │
-│  Reads from dest (port 3307) → writes summary tables back   │
-│  dim_booth_voter → fact_booth_sir, fact_booth_cubs          │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    A[New Data<br/>Source] -->|Add| B[New Transform]
+    B -->|Create| C[New Summary<br/>Table]
+    
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style C fill:#e8f5e9
 ```
 
-**Extract** — reads from 5 production sources, writes raw rows to dest (CDC with keyset pagination)  
-**Transform** — denormalizes once into dimension tables, then aggregates into summary tables  
-**Load** — upsert/insert logic (used by both extract and transform phases)
+**To add a new feature:**
+1. Create a handler directory
+2. Add config and handler files
+3. Create transform files
+4. Create destination table
+5. Run — auto-discovered!
 
 ---
 
@@ -454,3 +449,12 @@ Handler 'sir' completed: 258 rows, 45ms
 | Extract row values | `self.vals(rows, "col1", "col2", ...)` |
 | Add extract table | `INSERT INTO sync_config ...` |
 | Seed test data | `./scripts/seed_source.sh N` |
+
+---
+
+## Navigation
+
+- **[Home](../README.md)** — Back to main README
+- **[Architecture](ARCHITECTURE.md)** — How the system works
+- **[SIR Domain](SIR_DOMAIN.md)** — Voter verification example
+- **[Technical Details](TECHNICAL.md)** — Deep dive for developers
