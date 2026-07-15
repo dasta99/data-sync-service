@@ -2,6 +2,28 @@
 
 > **ETL pipeline that syncs data from production databases and creates summary reports.**
 
+## What is ETL?
+
+**ETL** = **Extract, Transform, Load**
+
+```mermaid
+flowchart LR
+    E[Extract<br/>Copy data] --> T[Transform<br/>Process data] --> L[Load<br/>Save results]
+    
+    style E fill:#e3f2fd
+    style T fill:#fff3e0
+    style L fill:#e8f5e9
+```
+
+| Step | What it does | Folder |
+|------|--------------|--------|
+| **Extract** | Copy data from production | `src/extract/` |
+| **Transform** | Process and summarize | `src/transform/` |
+| **Load** | Save to database | `src/load/` |
+| **Shared** | Common utilities | `src/shared/` |
+
+---
+
 ## What This System Does
 
 ```mermaid

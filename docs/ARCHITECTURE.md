@@ -1,5 +1,76 @@
 # ETL Pipeline Architecture
 
+## What is ETL?
+
+**ETL** stands for **Extract, Transform, Load** — the three steps data goes through:
+
+```mermaid
+flowchart LR
+    E[Extract<br/>Copy data] --> T[Transform<br/>Process data] --> L[Load<br/>Save results]
+    
+    style E fill:#e3f2fd
+    style T fill:#fff3e0
+    style L fill:#e8f5e9
+```
+
+| Step | What it does | Our folder |
+|------|--------------|------------|
+| **Extract** | Copy data from production databases to staging area | `src/extract/` |
+| **Transform** | Process data: combine, clean, summarize | `src/transform/` |
+| **Load** | Save processed data to destination tables | `src/load/` |
+
+The `src/shared/` folder contains utilities used by all three steps.
+
+---
+
+## Folder Responsibilities
+
+```mermaid
+flowchart TB
+    subgraph Extract["src/extract/"]
+        E1[Copies data from production]
+        E2[Uses CDC to only get changes]
+        E3[Tracks what was synced]
+    end
+    
+    subgraph Transform["src/transform/"]
+        T1[Combines related data]
+        T2[Creates summary tables]
+        T3[One handler per domain]
+    end
+    
+    subgraph Load["src/load/"]
+        L1[Saves to database]
+        L2[Upsert/Insert/Replace]
+    end
+    
+    subgraph Shared["src/shared/"]
+        S1[Database connections]
+        S2[Configuration]
+        S3[API endpoints]
+    end
+    
+    Extract --> Transform
+    Transform --> Load
+    Extract -.-> Shared
+    Transform -.-> Shared
+    Load -.-> Shared
+    
+    style Extract fill:#e3f2fd
+    style Transform fill:#fff3e0
+    style Load fill:#e8f5e9
+    style Shared fill:#f3e5f5
+```
+
+| Folder | Responsibility | Key Files |
+|--------|----------------|-----------|
+| `src/extract/` | Copy data from production to staging | `worker.py`, `loop.py`, `query_builder.py` |
+| `src/transform/` | Process data, create summaries | `handler.py`, `transforms/*.py` |
+| `src/load/` | Save data to database | `loader.py` |
+| `src/shared/` | Common utilities | `config.py`, `connections.py`, `api/` |
+
+---
+
 ## What This System Does
 
 ```mermaid
