@@ -1,7 +1,7 @@
 """Tests for KeysetQueryBuilder."""
 
 import pytest
-from sync.engine.query_builder import KeysetQueryBuilder
+from extract.query_builder import KeysetQueryBuilder
 
 
 @pytest.fixture

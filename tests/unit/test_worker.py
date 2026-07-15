@@ -3,11 +3,11 @@
 import pytest
 from unittest.mock import MagicMock
 
-from sync.engine.worker import BaseSyncWorker
-from sync.engine.query_builder import KeysetQueryBuilder
-from sync.engine.batch_writer import TransactionalBatchWriter
-from sync.engine.retry import SimpleRetryPolicy
-from sync.monitoring.status import StatusWriter
+from extract.worker import BaseSyncWorker
+from extract.query_builder import KeysetQueryBuilder
+from load.upsert.loader import TransactionalBatchWriter
+from extract.retry import SimpleRetryPolicy
+from extract.status import StatusWriter
 from tests.conftest import MockDatabase
 
 

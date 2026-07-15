@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import MagicMock
-from sync.engine.batch_writer import TransactionalBatchWriter
+from load.upsert.loader import TransactionalBatchWriter
 from tests.conftest import MockDatabase
 
 

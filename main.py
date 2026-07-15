@@ -71,7 +71,7 @@ def main():
 
     # Health API server
     port = int(os.getenv("HEALTH_PORT", "8090"))
-    from sync.api import app
+    from shared.api import app
     config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="warning")
     health_server = uvicorn.Server(config)
 

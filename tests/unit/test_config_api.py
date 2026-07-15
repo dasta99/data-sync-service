@@ -68,9 +68,9 @@ def _make_mock_repo():
 
 @pytest.fixture
 def client():
-    with patch("sync.api.config._get_repo") as mock:
+    with patch("shared.api.config._get_repo") as mock:
         mock.return_value = _make_mock_repo()
-        from sync.api.config import router
+        from shared.api.config import router
         from fastapi import FastAPI
         app = FastAPI()
         app.include_router(router, prefix="/config")
@@ -97,11 +97,11 @@ class TestGetConfig:
         assert resp.json()["table_name"] == "booth_voter"
 
     def test_get_not_found(self, client):
-        with patch("sync.api.config._get_repo") as mock:
+        with patch("shared.api.config._get_repo") as mock:
             repo = _make_mock_repo()
             repo.get_table_config.return_value = None
             mock.return_value = repo
-            from sync.api.config import router
+            from shared.api.config import router
             from fastapi import FastAPI
             app = FastAPI()
             app.include_router(router, prefix="/config")
@@ -112,11 +112,11 @@ class TestGetConfig:
 
 class TestCreateConfig:
     def test_create_success(self, client):
-        with patch("sync.api.config._get_repo") as mock:
+        with patch("shared.api.config._get_repo") as mock:
             repo = _make_mock_repo()
             repo.get_table_config.return_value = None
             mock.return_value = repo
-            from sync.api.config import router
+            from shared.api.config import router
             from fastapi import FastAPI
             app = FastAPI()
             app.include_router(router, prefix="/config")
@@ -131,11 +131,11 @@ class TestCreateConfig:
             assert resp.json()["table_name"] == "new_table"
 
     def test_create_conflict(self, client):
-        with patch("sync.api.config._get_repo") as mock:
+        with patch("shared.api.config._get_repo") as mock:
             repo = _make_mock_repo()
             repo.get_table_config.return_value = {"table_name": "booth_voter"}
             mock.return_value = repo
-            from sync.api.config import router
+            from shared.api.config import router
             from fastapi import FastAPI
             app = FastAPI()
             app.include_router(router, prefix="/config")
@@ -160,11 +160,11 @@ class TestUpdateConfig:
         assert resp.json()["poll_interval"] == 60
 
     def test_update_not_found(self, client):
-        with patch("sync.api.config._get_repo") as mock:
+        with patch("shared.api.config._get_repo") as mock:
             repo = _make_mock_repo()
             repo.get_table_config.return_value = None
             mock.return_value = repo
-            from sync.api.config import router
+            from shared.api.config import router
             from fastapi import FastAPI
             app = FastAPI()
             app.include_router(router, prefix="/config")
@@ -184,11 +184,11 @@ class TestDeleteConfig:
         assert resp.json()["deleted"] == "booth_voter"
 
     def test_delete_not_found(self, client):
-        with patch("sync.api.config._get_repo") as mock:
+        with patch("shared.api.config._get_repo") as mock:
             repo = _make_mock_repo()
             repo.delete.return_value = False
             mock.return_value = repo
-            from sync.api.config import router
+            from shared.api.config import router
             from fastapi import FastAPI
             app = FastAPI()
             app.include_router(router, prefix="/config")
