@@ -1,7 +1,5 @@
 # Technical Details
 
-> **For developers:** Deep dive into the implementation details.
-
 ## Directory Structure
 
 ```

@@ -1,7 +1,5 @@
 # ETL Pipeline Architecture
 
-> **For non-technical readers:** This document explains how data flows from production databases into summary tables using simple language and visual diagrams.
-
 ## What This System Does
 
 ```mermaid

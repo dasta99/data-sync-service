@@ -1,7 +1,5 @@
 # SIR Domain — Voter Verification Tracking
 
-> **For non-technical readers:** This document explains how we track voter verification status using simple language and visual diagrams.
-
 ## What is SIR?
 
 **SIR (Systematic Voters' Education and Electoral Participation)** is a system to verify voter information across polling booths.

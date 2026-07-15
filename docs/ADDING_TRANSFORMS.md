@@ -1,7 +1,5 @@
 # Adding New Features (Transforms)
 
-> **For developers:** How to add new data processing features to the system.
-
 ## Overview
 
 ```mermaid
