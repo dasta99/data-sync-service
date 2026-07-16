@@ -1,11 +1,86 @@
 services:
+  # ── Source MySQL (TDP - simulates production source) ──
+  tdp-source:
+    image: mysql:8.0
+    container_name: tdp-source
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: mytdp
+      MYSQL_USER: sync_user
+      MYSQL_PASSWORD: sync_pass
+    ports:
+      - "3308:3306"
+    volumes:
+      - tdp_source_data:/var/lib/mysql
+      - ./migrations/003_source_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./migrations/004_source_seed.sql:/docker-entrypoint-initdb.d/02_seed.sql
+      - ./migrations/006_dakavara_pa_schema.sql:/docker-entrypoint-initdb.d/03_dakavara_pa_schema.sql
+      - ./migrations/007_dakavara_pa_seed.sql:/docker-entrypoint-initdb.d/04_dakavara_pa_seed.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Destination MySQL (local data warehouse) ──
+  dest-warehouse:
+    image: mysql:8.0
+    container_name: dest-warehouse
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: mytdp
+      MYSQL_USER: sync_user
+      MYSQL_PASSWORD: sync_pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - dest_warehouse_data:/var/lib/mysql
+      - ./migrations/001_create_tables.sql:/docker-entrypoint-initdb.d/01_sync_tables.sql
+      - ./migrations/002_test_schema.sql:/docker-entrypoint-initdb.d/02_dest_schema.sql
+      - ./migrations/005_dest_fact_schema.sql:/docker-entrypoint-initdb.d/03_fact_tables.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Sync Service ──
   sync-service:
     build: .
     container_name: sync-service
     restart: unless-stopped
-    env_file: .env
+    env_file: .env.local
     environment:
       HEALTH_PORT: "8090"
       READ_TIMEOUT: "300"
     ports:
       - "8090:8090"
+    depends_on:
+      tdp-source:
+        condition: service_healthy
+      dest-warehouse:
+        condition: service_healthy
+
+  # ── ClickHouse (Analytics) ──
+  clickhouse:
+    build:
+      context: .
+      dockerfile: Dockerfile.clickhouse
+    container_name: clickhouse
+    restart: unless-stopped
+    ports:
+      - "8123:8123"  # HTTP
+      - "9000:9000"  # Native
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+volumes:
+  tdp_source_data:
+  dest_warehouse_data:
+  clickhouse_data:

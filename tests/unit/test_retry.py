@@ -1,7 +1,7 @@
 """Tests for SimpleRetryPolicy."""
 
 import pytest
-from sync.engine.retry import SimpleRetryPolicy
+from extract.retry import SimpleRetryPolicy
 
 
 @pytest.fixture

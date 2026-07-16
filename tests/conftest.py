@@ -4,7 +4,7 @@ import pytest
 from typing import Any, Dict, List, Optional, Tuple
 from unittest.mock import MagicMock
 
-from sync.abstractions import Database, Cursor
+from shared.interfaces import Database, Cursor
 
 
 class MockCursor(Cursor):

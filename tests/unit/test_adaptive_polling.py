@@ -1,7 +1,7 @@
 """Tests for adaptive polling — _compute_sleep_interval."""
 
 import pytest
-from sync.engine.loop import _compute_sleep_interval
+from extract.loop import _compute_sleep_interval
 
 
 class TestComputeSleepInterval:

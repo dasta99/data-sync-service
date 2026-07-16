@@ -1,8 +1,8 @@
 """Tests for StatusWriter and HistoryLogger."""
 
 import pytest
-from sync.monitoring.status import StatusWriter
-from sync.monitoring.history import HistoryLogger
+from extract.status import StatusWriter
+from extract.history import HistoryLogger
 from tests.conftest import MockDatabase
 
 

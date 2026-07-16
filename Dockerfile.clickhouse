@@ -1,0 +1,9 @@
+FROM clickhouse/clickhouse-server:24.3
+
+# Copy init scripts
+COPY docker/clickhouse/init.sql /docker-entrypoint-initdb.d/init.sql
+
+# Expose ports
+# 8123 - HTTP
+# 9000 - Native
+EXPOSE 8123 9000
