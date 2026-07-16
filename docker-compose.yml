@@ -63,6 +63,24 @@ services:
       dest-warehouse:
         condition: service_healthy
 
+  # ── ClickHouse (Analytics) ──
+  clickhouse:
+    build:
+      context: .
+      dockerfile: Dockerfile.clickhouse
+    container_name: clickhouse
+    restart: unless-stopped
+    ports:
+      - "8123:8123"  # HTTP
+      - "9000:9000"  # Native
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
 volumes:
   tdp_source_data:
   dest_warehouse_data:
+  clickhouse_data:
